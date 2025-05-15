@@ -111,13 +111,16 @@ if [[ -z "$SUMMARY" ]]; then
 fi
 
 # Step 6: Estimate cost (pricing per 1K tokens, in USD)
+# Pricing taken from https://platform.openai.com/docs/pricing
 COST=0
-if [[ "$MODEL" == "gpt-4o" || "$MODEL" == "gpt-4o-mini" ]]; then
-  COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.005 + $TOKENS_COMPLETION * 0.015) / 1000 }")
-elif [[ "$MODEL" == "gpt-4-turbo" || "$MODEL" == "gpt-4" ]]; then
+if [[ "$MODEL" == "gpt-4o" ]]; then
+  COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.0025 + $TOKENS_COMPLETION * 0.0100) / 1000 }")
+elif [[ "$MODEL" == "gpt-4o-mini" ]]; then
+  COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.00015 + $TOKENS_COMPLETION * 0.00060) / 1000 }")
+elif [[ "$MODEL" == "gpt-4-turbo" ]]; then
   COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.01 + $TOKENS_COMPLETION * 0.03) / 1000 }")
 elif [[ "$MODEL" == "gpt-3.5-turbo" ]]; then
-  COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_TOTAL * 0.0005) }")
+  COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.0005 + $TOKENS_COMPLETION * 0.0015) / 1000 }")
 fi
 
 # Step 7: Print results
