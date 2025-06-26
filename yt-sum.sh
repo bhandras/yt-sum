@@ -40,6 +40,7 @@ VIDEO_ID="${INFO%%|*}"
 VIDEO_TITLE_RAW="${INFO#*|}"
 VIDEO_TITLE_CLEAN=$(echo "$VIDEO_TITLE_RAW" | tr ' /:' '_' | tr -cd '[:alnum:]_')
 SRT_FILENAME="${VIDEO_TITLE_CLEAN}_${VIDEO_ID}.en.srt"
+SUMMARY_FILENAME="${VIDEO_TITLE_CLEAN}_${VIDEO_ID}_summary.txt"
 
 echo "Downloading subtitles to: $SRT_FILENAME"
 yt-dlp \
@@ -123,7 +124,16 @@ elif [[ "$MODEL" == "gpt-3.5-turbo" ]]; then
   COST=$(awk "BEGIN { printf \"%.6f\", ($TOKENS_PROMPT * 0.0005 + $TOKENS_COMPLETION * 0.0015) / 1000 }")
 fi
 
-# Step 7: Print results
+# Step 7: Save summary to file
+echo "Saving summary to: $SUMMARY_FILENAME"
+{
+  echo "Video Title: $VIDEO_TITLE_RAW"
+  echo "Video URL: $YOUTUBE_URL"
+  echo
+  echo "$SUMMARY"
+} > "$SUMMARY_FILENAME"
+
+# Step 8: Print results
 echo -e "\n=== SUMMARY: $VIDEO_TITLE_RAW ===\n$SUMMARY"
 echo -e "\n--- Token usage ---"
 echo "Prompt:    $TOKENS_PROMPT"
